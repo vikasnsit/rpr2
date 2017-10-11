@@ -1,0 +1,18 @@
+library(igraph)
+#import the sample_adjmatrix file:
+dat=read.csv(file.choose(),header=TRUE,row.names=1,check.names=FALSE)
+m=as.matrix(dat)
+net=graph.adjacency(m,mode="undirected",weighted=NULL,diag=FALSE)
+# show the names of the vertices you just imported:
+V(net)$name
+#import the sample_attributes
+a=read.csv(file.choose())
+V(net)$Sex=as.character(a$Sex[match(V(net)$name,a$ID)]) # This code says to create a vertex attribute called "Sex" by extracting the value of the column "Sex" in the attributes file when the Bird ID number matches the vertex name.
+V(net)$Name=as.character(a$Name[match(V(net)$name,a$ID)])
+V(net)$Sex # This will print the new vertex attribute, "Sex"
+V(net)$color=V(net)$Sex #assign the "Sex" attribute as the vertex color
+V(net)$color=gsub("F","red",V(net)$color) #Females will be red
+V(net)$color=gsub("M","blue",V(net)$color) #Males will be blue
+plot.igraph(net, vertex.label=V(net)$name,layout=layout.fruchterman.reingold)
+V(net)$size=degree(net)*5#because 1 is a small size for a node, I'm just multiplying it by 5
+plot.igraph(net,vertex.label=V(net)$Name,layout=layout.fruchterman.reingold)
